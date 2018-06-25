@@ -12,7 +12,7 @@ from telegram.utils.helpers import escape_markdown, mention_html
 
 from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER
 from tg_bot.__main__ import STATS, USER_INFO
-from tg_bot.modules.disable import DisableAbleCommandHandler
+from tg_bot.modules.disable import DisableAbleCommandHandler, DisableAbleRegexHandler
 from tg_bot.modules.helper_funcs.extraction import extract_user
 from tg_bot.modules.helper_funcs.filters import CustomFilters
 
@@ -79,39 +79,85 @@ SLAP_TEMPLATES = (
     "{user1} pins {user2} down and repeatedly {hits} them with a {item}.",
     "{user1} grabs up a {item} and {hits} {user2} with it.",
     "{user1} ties {user2} to a chair and {throws} a {item} at them.",
-    "{user1} gave a friendly push to help {user2} learn to swim in lava."
+    "{user1} gave a friendly push to help {user2} learn to swim in lava.",
+	"{user1} hits {user2} with a donut.",
+	"{user1} pats {user2} with a bat.",
+	"{user1} stabs {user2} with a {item}.",
+	"{user1} pokes {user2} with a {item}.",
 )
 
 ITEMS = (
-    "cast iron skillet",
-    "large trout",
-    "baseball bat",
-    "cricket bat",
-    "wooden cane",
-    "nail",
-    "printer",
-    "shovel",
-    "CRT monitor",
-    "physics textbook",
-    "toaster",
-    "portrait of Richard Stallman",
-    "television",
-    "five ton truck",
-    "roll of duct tape",
-    "book",
-    "laptop",
-    "old television",
-    "sack of rocks",
-    "rainbow trout",
-    "rubber chicken",
-    "spiked bat",
-    "fire extinguisher",
-    "heavy rock",
-    "chunk of dirt",
-    "beehive",
-    "piece of rotten meat",
-    "bear",
-    "ton of bricks",
+    "Extase",
+	"Fang Regalia",
+	"Renji's Zanpakuto",
+	"Killy’s Gravitational Beam Emitter",
+	"Babbo",
+	"Dragonslayer",
+	"Gilgamesh’s Ea",
+	"Bustermarm Sword",
+	"Punisher",
+	"Neko Neko Knuckles",
+	"Mystletainn",
+	"Amon's sword",
+	"Samehada",
+	"Courechouse",
+	"Kurikara",
+	"Murasame",
+	"Lancelot",
+	"Scissor Blade",
+	"Beast Spear",
+	"Staff of Ainz Ooal Gown",
+	"God Arc",
+	"X-Gloves",
+	"Gurren Lagann",
+	"Enkidu",
+	"Senbonzakura",
+	"3D MANEUVER GEAR",
+	"Voltron",
+	"Saiga's Camera",
+	"Silver Sword of Gith",
+	"Dagger of Time",
+	"master Sword",
+	"Phantom Sword",
+	"Lokomo Sword",
+	"Goddess Sword",
+	"Four Sword",
+	"Cosmic Cube",
+	"Holy Grail",
+	"Spear of Longinus",
+	"Infinity Gauntlet",
+	"Rock of Eternity",
+	"Falchion",
+	"Gradivus",
+	"Mercurius",
+	"Parthia",
+	"Book Of Naga",
+	"Binding Blade",
+	"Durandal",
+	"Armads",
+	"Forblaze",
+	"Brynhildr",
+	"Crystalis",
+	"Blades of Chaos",
+	"Umbra",
+	"Staff of Magius",
+	"Crown rend",
+	"Mace of Cuthbert",
+	"Sword of Kas",
+	"Excalibur"
+	"Ki Blast ",
+	"Finger Beam",
+	"Kamehameha ",
+	"Destructo Disc",
+	"Spirit Bomb",
+	"Meteor Blast",
+	"Rasengan",
+	"RasenShuriken",
+	"Chidori",
+	"Reaper of Death Seal",
+	"Dual Layer Amaterasu",
+	"Taijutsu Kick",
+	"Bijju Bomb",
 )
 
 THROW = (
@@ -126,7 +172,9 @@ HIT = (
     "whacks",
     "slaps",
     "smacks",
-    "bashes",
+    "bashes"
+    "pats",
+    "smashes",
 )
 
 GMAPS_LOC = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -147,7 +195,7 @@ def slap(bot: Bot, update: Update, args: List[str]):
 
     # get user who sent message
     if msg.from_user.username:
-        curr_user = "@" + escape_markdown(msg.from_user.username)
+        curr_user = msg.from_user.first_name
     else:
         curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
 
@@ -156,7 +204,7 @@ def slap(bot: Bot, update: Update, args: List[str]):
         slapped_user = bot.get_chat(user_id)
         user1 = curr_user
         if slapped_user.username:
-            user2 = "@" + escape_markdown(slapped_user.username)
+            user2 = slapped_user.first_name
         else:
             user2 = "[{}](tg://user?id={})".format(slapped_user.first_name,
                                                    slapped_user.id)
@@ -382,7 +430,7 @@ TIME_HANDLER = CommandHandler("time", get_time, pass_args=True)
 RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
-
+SLAP_REGEX_HANDLER = DisableAbleRegexHandler("(?i)bhag", slap, friendly="slap")
 ECHO_HANDLER = CommandHandler("echo", echo, filters=Filters.user(OWNER_ID))
 MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
 
@@ -397,3 +445,4 @@ dispatcher.add_handler(INFO_HANDLER)
 dispatcher.add_handler(ECHO_HANDLER)
 dispatcher.add_handler(MD_HELP_HANDLER)
 dispatcher.add_handler(STATS_HANDLER)
+dispatcher.add_handler(SLAP_REGEX_HANDLER)
